@@ -13,9 +13,8 @@ router.post('/register',register,User.register)
 
 router.post('/login',login,User.login)
 
-router.post('/min',)
-router.post('/sum',)
-router.post('/find',)
+router.post('/min',emp.min)
+router.post('/address',emp.addressLookup)
 router.post('/empadd',emp.empAdd)
 router.post('/salary',emp.salary)
 module.exports = router;

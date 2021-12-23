@@ -1,19 +1,21 @@
-const empModel = require('../models/Address')
+const empModel = require('../models/address')
 const salary = require('../models/salary')
 const mongoose = require('mongoose');
+
 
 class emp {
     constructor() {
       return {
         salary:this.salary.bind(this),
         empAdd:this.empId.bind(this),
-        min:this.min.bind(this),
+        
       };
     }
 
 
 
     async salary(req, res, next) {
+     empModel.c
         try {
           let body = req.body.data ? JSON.parse(req.body.data) : req.body;
           const user = {
@@ -57,11 +59,66 @@ class emp {
                               return res.json({ msg:"Invalid", })
                             }
                                             }
-            async min(req,res,next){
-                try{
-                   
-                }catch(err){
-
-                }
-            }
+            
     } 
+    const addressLookup = (req,res)=>{
+        empModel.aggregate([
+            {
+                $lookup: {
+                    from: "salary",
+                    localField: "empID",
+                    foreignField: "empID",
+                    as: "address_info",
+                  },
+                  
+            },
+            {
+                $unwind: "$address_info",
+            },
+        ])
+        .then((result)=>{
+            res.send(result);
+        })
+        .catch((error)=>[
+            res.send('Not Working')
+        ]);
+    }
+    // db.sales.aggregate(
+    //     [
+    //       {
+    //         $group:
+    //         {
+    //           _id: "$item",
+    //           minQuantity: { $min: "$quantity" }
+    //         }
+    //       }
+    //     ]
+    //   )
+    const min  = (req,res)=>{
+        empModel.aggregate(
+            [
+              {
+                $group:
+                {
+                  _id: "$empID",
+                  minSalary: { $min: "$ctc" }
+                }
+              }
+            ]
+          )
+        .then((result)=>{
+            res.send(result);
+        })
+        .catch((error)=>[
+            res.send('Not Working')
+        ]);
+    }
+
+
+
+    module.exports = new emp();
+    module.exports = {
+        addressLookup,
+        min,
+
+    }

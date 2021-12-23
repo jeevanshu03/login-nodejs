@@ -9,12 +9,12 @@ const addressSchema = new mongoose.Schema({
     homeAdd: {
         type: String,
         required: true,
-        unique:true
+        
     },
     officeAdd:{
         type:String,
         required:true,
-        unique:true
+        
     },
     empName: {
         type:String,

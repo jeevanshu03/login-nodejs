@@ -1,7 +1,7 @@
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 
 
-mongoose.connect('mongodb://localhost:27017/registration',{useNewUrlParser:true, useUnifiedTopology:true, useCreateIndex:true},function(err) {
-    if(err) throw err
-    console.log("Successfully connected to DB");
-})
+// mongoose.connect('mongodb://localhost:27017/registration',{useNewUrlParser:true, useUnifiedTopology:true, useCreateIndex:true},function(err) {
+//     if(err) throw err
+//     console.log("Successfully connected to DB");
+// })
