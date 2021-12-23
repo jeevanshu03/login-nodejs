@@ -32,7 +32,7 @@ class Users {
         
       };
       const resultData = await userModel.create(userData);
-      console.log("ok")
+     
 
       return res.status(201).json({
         message: "User Registered",

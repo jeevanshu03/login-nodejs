@@ -5,6 +5,7 @@ const { register, login } = require('../middleware/validator')
 
 const User = require('../controller/controller');
 
+const emp = require('../controller/emp.controller')
 // const jwt =require('jsonwebtoken')
 
 
@@ -12,7 +13,11 @@ router.post('/register',register,User.register)
 
 router.post('/login',login,User.login)
 
-
+router.post('/min',)
+router.post('/sum',)
+router.post('/find',)
+router.post('/empadd',emp.empAdd)
+router.post('/salary',emp.salary)
 module.exports = router;
 // register
 // (req, res,next) =>{
