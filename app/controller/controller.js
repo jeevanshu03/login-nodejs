@@ -1,4 +1,5 @@
 const userModel = require("../models/User");
+const Joi =require("joi")
 
 const bcrypt = require("bcrypt");
 
@@ -21,16 +22,15 @@ class Users {
    * @returns  store users Data
    */
    async register(req, res, next) {
+    const validationSchema = {
+      username: Joi.string().required().trim(),
+      email: Joi.string().required().trim(),
+      mobile: Joi.string().min(7).max(14).required().trim(),
+      password: Joi.string().required().trim(),
+      type:Joi.string().required().trim()
+    }
     try {
-      let bodyData = req.body.data ? JSON.parse(req.body.data) : req.body;
-      const userData = {
-        name: bodyData.name,
-        email: bodyData.email,
-        phoneNo: bodyData.phoneNo,
-        address:bodyData.address,
-        password: bodyData.password
-        
-      };
+      let userdata = Joi.validate(req.body, validationSchema)
       const resultData = await userModel.create(userData);
      
 
@@ -50,26 +50,30 @@ class Users {
 
 
   async login(req, res, next) {
+    const validationSchema = {
+      username: Joi.string().required().trim(),
+      password: Joi.string().required().trim(),
+    }
     try {
-      let bodyData = req.body.data ? JSON.parse(req.body.data) : req.body;
-      const checkValid = await userModel.findOne({ email: bodyData.email });
+      let {username} = Joi.validate(req.body, validationSchema)
+      const checkValid = await userModel.findOne({ username: username });
+      if(!checkValid){
+        return res
+        .status(500)
+        .json({ success: false, message: "invalid password" });
+      }
       const comparePassword = await bcrypt.compare(
-        bodyData.password,
+        password,
         checkValid.password
       );
       if (!comparePassword) {
         return res
           .status(500)
-          .json({ success: false, message: "email or password is wrong" });
+          .json({ success: false, message: "invalid password" });
       }
-      
-      
-
       return res.status(200).json({
         success: true,
-        message: "login successfully",
-        result: checkValid,
-      
+        message: "login successfully"      
       });
     } catch (err) {
       return res

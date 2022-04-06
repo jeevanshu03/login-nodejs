@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('./app/utils/emp')
-// require('./app/utils/connection')
+require('./app/utils/connection')
 const app = express();
 
 app.use(express.json());

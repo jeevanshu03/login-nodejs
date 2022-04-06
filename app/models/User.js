@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require('bcryptjs')
 
 const UserSchema = new mongoose.Schema({
-    name: {
+    username: {
         type: String,
         required: true
     },
@@ -11,20 +11,19 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique:true
     },
-    phoneNo:{
+    mobile:{
         type:Number,
         required:true,
         unique:true
-    },
-    address: {
-        type:String,
-        required:true,
-
     },
     password: {
         type: String,
         required: true
     },
+    type:{
+        type: String,
+        required: true
+    }
     
 });
 UserSchema.pre('create',async(next) =>{

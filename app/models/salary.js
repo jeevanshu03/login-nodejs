@@ -2,24 +2,26 @@ const mongoose = require("mongoose");
 
 
 const salarySchema = new mongoose.Schema({
-    empId: {
-        type: String,
+    userId: {
+        type: mongoose.Types.ObjectId,
         required: true
     },
     ctc: {
         type: Number,
         required: true,
-        unique:true
     },
     inHand:{
         type:Number,
         required:true,
-        unique:true
     },
     currentlyWorking: {
         type:Boolean,
-        required:true,
+        default:true
 
+    },
+    deduction: {
+        type:Number,
+        required:true
     },
     empName: {
         type: String,
@@ -30,4 +32,4 @@ const salarySchema = new mongoose.Schema({
 
 const salary = mongoose.model('salary', salarySchema);
 
-module.exports = address;
+module.exports = salary;

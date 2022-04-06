@@ -1,124 +1,96 @@
-const empModel = require('../models/address')
-const salary = require('../models/salary')
-const mongoose = require('mongoose');
+const empModel = require("../models/address");
+const salary = require("../models/salary");
+const mongoose = require("mongoose");
 
+class Employee {
+  constructor() {
+    return {
+      salary: this.salary.bind(this),
+      empAdd: this.empAdd.bind(this),
+      addressLookup: this.addressLookup.bind(this),
+      min: this.min.bind(this)
+    };
+  }
 
-class emp {
-    constructor() {
-      return {
-        salary:this.salary.bind(this),
-        empAdd:this.empId.bind(this),
-        
+  async salary(req, res, next) {
+    try {
+      let body = req.body.data ? JSON.parse(req.body.data) : req.body;
+      const user = {
+        userId: body.userId,
+        ctc: body.ctc,
+        inHand: body.inHand,
+        deduction: body.deduction,
+        empName: body.empName,
       };
+
+      const resultData = await salary.create(user);
+
+      return res
+        .status(201)
+        .json({ message: "User Registered", result: resultData });
+    } catch (err) {
+      return res.json({ msg: "Invalid" });
     }
+  }
 
+  async empAdd(req, res, next) {
+    try {
+      let body = req.body.data ? JSON.parse(req.body.data) : req.body;
+      const user = {
+        userId: body.userId,
+        homeAdd: body.homeAdd,
+        officeAdd: body.officeAdd,
+        empName: body.empName,
+        empNo: body.empNo,
+      };
 
+      const resultData = await empModel.create(user);
 
-    async salary(req, res, next) {
-     empModel.c
-        try {
-          let body = req.body.data ? JSON.parse(req.body.data) : req.body;
-          const user = {
-            empId:body.empId,
-            ctc:body.ctc,
-            inHand:body.inHand,
-            currentlyWorking:body.currentlyWorking ,
-            empName:body.empName 
-            
-            
-          };
-
-          const resultData = await salary.create(user);
-          
-    
-          return res.status(201).json({ message: "User Registered",  result: resultData, });
-        } catch (err) {
-          return res.json({ msg:"Invalid", })
-        }
-                        }
-
-
-                    async empAdd(req, res, next) {
-                            try {
-                              let body = req.body.data ? JSON.parse(req.body.data) : req.body;
-                              const user = {
-                                empId:body.empId,
-                                homeAdd:body.homeAdd,
-                                officeAdd:body.officeAdd,
-                                empName:body.empName ,
-                                empNo:body.empNo 
-                                
-                                
-                              };
-                    
-                              const resultData = await empModel.create(user);
-                              
-                        
-                              return res.status(201).json({ message: "User Registered",  result: resultData, });
-                            } catch (err) {
-                              return res.json({ msg:"Invalid", })
-                            }
-                                            }
-            
-    } 
-    const addressLookup = (req,res)=>{
-        empModel.aggregate([
-            {
-                $lookup: {
-                    from: "salary",
-                    localField: "empID",
-                    foreignField: "empID",
-                    as: "address_info",
-                  },
-                  
-            },
-            {
-                $unwind: "$address_info",
-            },
-        ])
-        .then((result)=>{
-            res.send(result);
-        })
-        .catch((error)=>[
-            res.send('Not Working')
-        ]);
+      return res
+        .status(201)
+        .json({ message: "User Registered", result: resultData });
+    } catch (err) {
+      return res.json({ msg: "Invalid" });
     }
-    // db.sales.aggregate(
-    //     [
-    //       {
-    //         $group:
-    //         {
-    //           _id: "$item",
-    //           minQuantity: { $min: "$quantity" }
-    //         }
-    //       }
-    //     ]
-    //   )
-    const min  = (req,res)=>{
-        empModel.aggregate(
-            [
-              {
-                $group:
-                {
-                  _id: "$empID",
-                  minSalary: { $min: "$ctc" }
-                }
-              }
-            ]
-          )
-        .then((result)=>{
-            res.send(result);
-        })
-        .catch((error)=>[
-            res.send('Not Working')
-        ]);
-    }
+  }
+ async addressLookup(req, res) {
+    empModel
+      .aggregate([
+        {
+          $lookup: {
+            from: "salary",
+            localField: "userId",
+            foreignField: "userId",
+            as: "address_info",
+          },
+        },
+        {
+          $unwind: "$address_info",
+        },
+      ])
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error) => [res.send("Not Working")]);
+  };
 
+   async min(req, res) {
+    empModel
+      .aggregate([
+        {
+          $group: {
+            _id: "$userId",
+            minSalary: { $min: "$ctc" },
+          },
+        },
+      ])
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error) => [res.send("Not Working")]);
+  };
+}
 
+ 
 
-    module.exports = new emp();
-    module.exports = {
-        addressLookup,
-        min,
-
-    }
+module.exports = new Employee();
